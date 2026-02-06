@@ -1,0 +1,85 @@
+# English translations for ThreadNote
+# Copyright (C) 2026
+# This file is distributed under the same license as the ThreadNote package.
+
+msgid ""
+msgstr ""
+"Project-Id-Version: ThreadNote 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-06 12:00+0000\n"
+"PO-Revision-Date: 2026-02-06 12:00+0000\n"
+"Last-Translator: ThreadNote Team\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Application Name
+msgid "ThreadNote"
+msgstr "ThreadNote"
+
+# Theme
+msgid "Toggle Theme"
+msgstr "Toggle Theme"
+
+# Priority Dialog
+msgid "Set Task Priority"
+msgstr "Set Task Priority"
+
+msgid "Eisenhower Matrix - Task Priority"
+msgstr "Eisenhower Matrix - Task Priority"
+
+msgid "Select Priority Quadrant"
+msgstr "Select Priority Quadrant"
+
+msgid "P1: Urgent + Important"
+msgstr "P1: Urgent + Important"
+
+msgid "P2: Not Urgent + Important"
+msgstr "P2: Not Urgent + Important"
+
+msgid "P3: Urgent + Not Important"
+msgstr "P3: Urgent + Not Important"
+
+msgid "P4: Not Urgent + Not Important"
+msgstr "P4: Not Urgent + Not Important"
+
+msgid "Do First - Critical tasks requiring immediate attention"
+msgstr "Do First - Critical tasks requiring immediate attention"
+
+msgid "Schedule - Important goals and planning"
+msgstr "Schedule - Important goals and planning"
+
+msgid "Delegate - Interruptions and distractions"
+msgstr "Delegate - Interruptions and distractions"
+
+msgid "Eliminate - Time wasters"
+msgstr "Eliminate - Time wasters"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Cancel"
+msgstr "Cancel"
+
+# Context Menu
+msgid "Set Priority..."
+msgstr "Set Priority..."
+
+# Tree Headers
+msgid "Task"
+msgstr "Task"
+
+msgid "Prio"
+msgstr "Prio"
+
+msgid "Status"
+msgstr "Status"
+
+# Editor Placeholder
+msgid "# New Task"
+msgstr "# New Task"
+
+msgid "Details..."
+msgstr "Details..."

@@ -7,9 +7,10 @@ class EditorWidget(QTextEdit):
     
     content_changed = pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, translator=None, parent=None):
         super().__init__(parent)
-        self.setPlaceholderText("# New Task\nDetails...")
+        self._ = translator if translator else lambda x: x
+        self.setPlaceholderText(f"{self._('# New Task')}\n{self._('Details...')}")
         self.textChanged.connect(self._on_text_changed)
 
     def _on_text_changed(self):

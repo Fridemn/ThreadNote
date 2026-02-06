@@ -7,6 +7,8 @@ from PyQt6.QtCore import Qt
 from ..constants import APP_NAME, DEFAULT_WINDOW_SIZE
 from .editor_widget import EditorWidget
 from .task_tree_widget import TaskTreeWidget
+from .priority_dialog import PriorityDialog
+from ..core.task import Task
 
 class MainWindow(QMainWindow):
     """Primary application window."""
@@ -24,7 +26,7 @@ class MainWindow(QMainWindow):
         self.addToolBar(self.toolbar)
         
         # Actions (Theme Toggle placeholder)
-        self.theme_action = QAction("Toggle Theme", self)
+        self.theme_action = QAction(self._("Toggle Theme"), self)
         self.toolbar.addAction(self.theme_action)
 
         central_widget = QWidget()
@@ -36,11 +38,11 @@ class MainWindow(QMainWindow):
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
         
         # Left: Tree
-        self.tree_widget = TaskTreeWidget()
+        self.tree_widget = TaskTreeWidget(translator=self._)
         self.splitter.addWidget(self.tree_widget)
         
         # Right: Editor
-        self.editor_widget = EditorWidget()
+        self.editor_widget = EditorWidget(translator=self._)
         self.splitter.addWidget(self.editor_widget)
         
         # Set initial sizes (30% left, 70% right)

@@ -33,6 +33,7 @@ class AppController:
         """Connect UI signals to controller logic."""
         self._window.editor_widget.content_changed.connect(self._on_editor_content_changed)
         self._window.theme_action.triggered.connect(self.toggle_theme)
+        self._window.tree_widget.priority_change_requested.connect(self._on_priority_change_requested)
 
     def toggle_theme(self):
         """Switch between light and dark mode."""
@@ -63,6 +64,34 @@ class AppController:
         # Auto-save
         self._data_store.save_raw_md(content)
         self._data_store.save_metadata(tasks)
+
+    def _on_priority_change_requested(self, task_id: str):
+        """Handle priority change request from tree widget."""
+        from ..ui.priority_dialog import PriorityDialog
+        
+        # Get current content and tasks
+        content = self._window.editor_widget.toPlainText()
+        tasks = self._data_store.reconcile_tasks(content)
+        
+        # Find the task
+        task = next((t for t in tasks if t.id == task_id), None)
+        if not task:
+            return
+        
+        # Show priority dialog with translator
+        dialog = PriorityDialog(current_priority=task.priority, translator=self._window._, parent=self._window)
+        if dialog.exec() == PriorityDialog.DialogCode.Accepted:
+            new_priority = dialog.get_priority()
+            if new_priority is not None and new_priority != task.priority:
+                # Update task priority
+                task.priority = new_priority
+                task.touch()
+                
+                # Save metadata (no MD change needed, priority is only in metadata)
+                self._data_store.save_metadata(tasks)
+                
+                # Refresh tree to show new priority
+                self._window.tree_widget.refresh(tasks)
 
     def show(self) -> None:
         """Show the main window."""

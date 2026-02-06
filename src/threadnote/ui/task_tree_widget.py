@@ -1,7 +1,8 @@
 """Task tree view widget."""
 from typing import List, Optional
-from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout, QMenu
 from PyQt6.QtCore import pyqtSignal, Qt
+from PyQt6.QtGui import QAction
 
 from ..core.task import Task, TaskStatus
 
@@ -12,17 +13,21 @@ class TaskTreeWidget(QWidget):
     """
     
     task_selected = pyqtSignal(str) # Emits task ID
+    priority_change_requested = pyqtSignal(str) # Emits task ID for priority change
 
-    def __init__(self, parent=None):
+    def __init__(self, translator=None, parent=None):
         super().__init__(parent)
+        self._ = translator if translator else lambda x: x
         self._layout = QVBoxLayout(self)
         self._layout.setContentsMargins(0, 0, 0, 0)
         
         self._tree = QTreeWidget()
-        self._tree.setHeaderLabels(["Task", "Prio", "Status"])
+        self._tree.setHeaderLabels([self._("Task"), self._("Prio"), self._("Status")])
         self._tree.setColumnWidth(0, 200)
         self._tree.setColumnWidth(1, 50)
         self._tree.itemClicked.connect(self._on_item_clicked)
+        self._tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self._tree.customContextMenuRequested.connect(self._show_context_menu)
         
         self._layout.addWidget(self._tree)
 
@@ -71,3 +76,21 @@ class TaskTreeWidget(QWidget):
         task_id = item.data(0, Qt.ItemDataRole.UserRole)
         if task_id:
             self.task_selected.emit(task_id)
+    
+    def _show_context_menu(self, position):
+        """Show context menu for task operations."""
+        item = self._tree.itemAt(position)
+        if not item:
+            return
+        
+        task_id = item.data(0, Qt.ItemDataRole.UserRole)
+        if not task_id:
+            return
+        
+        menu = QMenu(self._tree)
+        
+        priority_action = QAction(self._("Set Priority..."), self._tree)
+        priority_action.triggered.connect(lambda: self.priority_change_requested.emit(task_id))
+        menu.addAction(priority_action)
+        
+        menu.exec(self._tree.viewport().mapToGlobal(position))

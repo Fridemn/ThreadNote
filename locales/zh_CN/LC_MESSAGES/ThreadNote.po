@@ -1,0 +1,85 @@
+# Chinese (Simplified) translations for ThreadNote
+# Copyright (C) 2026
+# This file is distributed under the same license as the ThreadNote package.
+
+msgid ""
+msgstr ""
+"Project-Id-Version: ThreadNote 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-06 12:00+0000\n"
+"PO-Revision-Date: 2026-02-06 12:00+0800\n"
+"Last-Translator: ThreadNote Team\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Application Name
+msgid "ThreadNote"
+msgstr "ThreadNote"
+
+# Theme
+msgid "Toggle Theme"
+msgstr "切换主题"
+
+# Priority Dialog
+msgid "Set Task Priority"
+msgstr "设置任务优先级"
+
+msgid "Eisenhower Matrix - Task Priority"
+msgstr "艾森豪威尔矩阵 - 任务优先级"
+
+msgid "Select Priority Quadrant"
+msgstr "选择优先级象限"
+
+msgid "P1: Urgent + Important"
+msgstr "P1：紧急且重要"
+
+msgid "P2: Not Urgent + Important"
+msgstr "P2：不紧急但重要"
+
+msgid "P3: Urgent + Not Important"
+msgstr "P3：紧急但不重要"
+
+msgid "P4: Not Urgent + Not Important"
+msgstr "P4：不紧急也不重要"
+
+msgid "Do First - Critical tasks requiring immediate attention"
+msgstr "首先完成 - 需要立即处理的关键任务"
+
+msgid "Schedule - Important goals and planning"
+msgstr "安排计划 - 重要的目标和规划"
+
+msgid "Delegate - Interruptions and distractions"
+msgstr "委派他人 - 干扰和分心的事务"
+
+msgid "Eliminate - Time wasters"
+msgstr "消除 - 浪费时间的事情"
+
+msgid "OK"
+msgstr "确定"
+
+msgid "Cancel"
+msgstr "取消"
+
+# Context Menu
+msgid "Set Priority..."
+msgstr "设置优先级..."
+
+# Tree Headers
+msgid "Task"
+msgstr "任务"
+
+msgid "Prio"
+msgstr "优先级"
+
+msgid "Status"
+msgstr "状态"
+
+# Editor Placeholder
+msgid "# New Task"
+msgstr "# 新任务"
+
+msgid "Details..."
+msgstr "详情..."
