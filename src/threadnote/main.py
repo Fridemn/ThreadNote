@@ -1,8 +1,8 @@
 """ThreadNote application entry point."""
 from PyQt6.QtWidgets import QApplication
 
-from threadnote.core.app_controller import AppController
-from threadnote.utils.i18n import gettext_factory
+from .core.app_controller import AppController
+from .utils.i18n import gettext_factory
 
 
 def main() -> int:
