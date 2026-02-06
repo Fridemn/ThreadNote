@@ -14,6 +14,8 @@ class TaskTreeWidget(QWidget):
     
     task_selected = pyqtSignal(str) # Emits task ID
     priority_change_requested = pyqtSignal(str) # Emits task ID for priority change
+    status_change_requested = pyqtSignal(str, str) # Emits (task_id, new_status)
+    duedate_change_requested = pyqtSignal(str) # Emits task ID for due date change
 
     def __init__(self, translator=None, parent=None):
         super().__init__(parent)
@@ -59,8 +61,28 @@ class TaskTreeWidget(QWidget):
                 item = QTreeWidgetItem(parent_widget)
                 item.setText(0, t.title)
                 item.setText(1, f"P{t.priority}")
-                item.setText(2, t.status.value)
+                item.setText(2, t.status.value.capitalize())
                 item.setData(0, Qt.ItemDataRole.UserRole, t.id)
+                
+                # Style by status
+                if t.status.value == 'done':
+                    # Gray out and strikethrough
+                    from PyQt6.QtGui import QFont, QColor
+                    font = item.font(0)
+                    font.setStrikeOut(True)
+                    for col in range(3):
+                        item.setFont(col, font)
+                        item.setForeground(col, QColor(128, 128, 128))
+                elif t.status.value == 'doing':
+                    # Bold for active tasks
+                    from PyQt6.QtGui import QFont
+                    font = item.font(0)
+                    font.setBold(True)
+                    item.setFont(0, font)
+                elif t.status.value == 'timeout':
+                    # Red text for timeout
+                    from PyQt6.QtGui import QColor
+                    item.setForeground(0, QColor(200, 0, 0))
                 
                 # Recursion
                 if t.id in children_map:
@@ -92,5 +114,31 @@ class TaskTreeWidget(QWidget):
         priority_action = QAction(self._("Set Priority..."), self._tree)
         priority_action.triggered.connect(lambda: self.priority_change_requested.emit(task_id))
         menu.addAction(priority_action)
+        
+        # Due date action
+        duedate_action = QAction(self._("Set Due Date"), self._tree)
+        duedate_action.triggered.connect(lambda: self.duedate_change_requested.emit(task_id))
+        menu.addAction(duedate_action)
+        
+        menu.addSeparator()
+        
+        # Status submenu
+        status_menu = menu.addMenu(self._("Set Status"))
+        
+        status_todo = QAction(self._("Todo"), self._tree)
+        status_todo.triggered.connect(lambda: self.status_change_requested.emit(task_id, "todo"))
+        status_menu.addAction(status_todo)
+        
+        status_doing = QAction(self._("Doing"), self._tree)
+        status_doing.triggered.connect(lambda: self.status_change_requested.emit(task_id, "doing"))
+        status_menu.addAction(status_doing)
+        
+        status_done = QAction(self._("Done"), self._tree)
+        status_done.triggered.connect(lambda: self.status_change_requested.emit(task_id, "done"))
+        status_menu.addAction(status_done)
+        
+        status_timeout = QAction(self._("Timeout"), self._tree)
+        status_timeout.triggered.connect(lambda: self.status_change_requested.emit(task_id, "timeout"))
+        status_menu.addAction(status_timeout)
         
         menu.exec(self._tree.viewport().mapToGlobal(position))

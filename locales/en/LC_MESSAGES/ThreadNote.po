@@ -67,6 +67,61 @@ msgstr "Cancel"
 msgid "Set Priority..."
 msgstr "Set Priority..."
 
+# Status Management
+msgid "Set Status"
+msgstr "Set Status"
+
+msgid "Todo"
+msgstr "Todo"
+
+msgid "Doing"
+msgstr "Doing"
+
+msgid "Done"
+msgstr "Done"
+
+msgid "Timeout"
+msgstr "Timeout"
+
+msgid "Archive"
+msgstr "Archive"
+
+msgid "Archive Completed Tasks"
+msgstr "Archive Completed Tasks"
+
+# Archive timestamp
+msgid "Archived on"
+msgstr "Archived on"
+
+# Language
+msgid "Language"
+msgstr "Language"
+
+msgid "Switch Language"
+msgstr "Switch Language"
+
+msgid "English"
+msgstr "English"
+
+msgid "Chinese (Simplified)"
+msgstr "Chinese (Simplified)"
+
+# Due Date
+msgid "Set Due Date"
+msgstr "Set Due Date"
+
+msgid "No Due Date"
+msgstr "No Due Date"
+
+msgid "Today"
+msgstr "Today"
+
+msgid "Tomorrow"
+msgstr "Tomorrow"
+
+msgid "Next Week"
+msgstr "Next Week"
+
 # Tree Headers
 msgid "Task"
 msgstr "Task"

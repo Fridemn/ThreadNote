@@ -67,6 +67,61 @@ msgstr "取消"
 msgid "Set Priority..."
 msgstr "设置优先级..."
 
+# Status Management
+msgid "Set Status"
+msgstr "设置状态"
+
+msgid "Todo"
+msgstr "待办"
+
+msgid "Doing"
+msgstr "进行中"
+
+msgid "Done"
+msgstr "完成"
+
+msgid "Timeout"
+msgstr "超时"
+
+msgid "Archive"
+msgstr "归档"
+
+msgid "Archive Completed Tasks"
+msgstr "归档已完成任务"
+
+# Archive timestamp
+msgid "Archived on"
+msgstr "归档于"
+
+# Language
+msgid "Language"
+msgstr "语言"
+
+msgid "Switch Language"
+msgstr "切换语言"
+
+msgid "English"
+msgstr "English"
+
+msgid "Chinese (Simplified)"
+msgstr "简体中文"
+
+# Due Date
+msgid "Set Due Date"
+msgstr "设置截止日期"
+
+msgid "No Due Date"
+msgstr "无截止日期"
+
+msgid "Today"
+msgstr "今天"
+
+msgid "Tomorrow"
+msgstr "明天"
+
+msgid "Next Week"
+msgstr "下周"
+
 # Tree Headers
 msgid "Task"
 msgstr "任务"

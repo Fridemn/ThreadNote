@@ -18,14 +18,17 @@ class AppConfig:
     project_root: Path
     locales_path: Path
     default_locale: str
+    preferences_file: Path
 
 
 def load_config() -> AppConfig:
     """Build the runtime configuration."""
     project_root = get_project_root()
     locales_path = project_root / LOCALES_DIR_NAME
+    preferences_file = project_root / "data" / "preferences.json"
     return AppConfig(
         project_root=project_root,
         locales_path=locales_path,
         default_locale=DEFAULT_LOCALE,
+        preferences_file=preferences_file,
     )
