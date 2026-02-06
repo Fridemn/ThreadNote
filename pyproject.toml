@@ -1,0 +1,16 @@
+[build-system]
+requires = ["hatchling>=1.20.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "threadnote"
+version = "0.1.0"
+description = "Minimalist task management app for programmers."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+  "PyQt6>=6.5.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/threadnote"]
