@@ -126,11 +126,24 @@ class AppController:
             # Save metadata
             self._data_store.save_metadata(tasks)
             
-            # Refresh tree to show new status
-            self._window.tree_widget.refresh(tasks)
-            
-            # If marked as Done, potentially trigger archive (for now just manual)
-            # Auto-archive could be implemented here or as a separate action
+            # Auto-archive: If marked as Done and has no children, archive immediately
+            if task.status == TaskStatus.DONE and len(task.children) == 0:
+                # Archive the completed task
+                active_tasks = self._archive_manager.archive_completed_tasks(tasks)
+                
+                # Regenerate markdown from active tasks only
+                self._regenerate_markdown(active_tasks)
+                
+                # Save metadata for active tasks
+                self._data_store.save_metadata(active_tasks)
+                
+                # Refresh UI
+                new_content = self._data_store.todo_file.read_text(encoding="utf-8")
+                self._window.editor_widget.set_content(new_content)
+                self._window.tree_widget.refresh(active_tasks)
+            else:
+                # Just refresh tree to show new status
+                self._window.tree_widget.refresh(tasks)
         except ValueError:
             # Invalid status value
             pass
