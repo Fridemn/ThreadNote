@@ -170,8 +170,12 @@ class MainWindow(QMainWindow):
                 )
                 self._first_minimize_shown = True
         else:
-            # Actually quit
+            # Actually quit - hide tray icon and accept close event
+            self.tray_icon.hide()
             event.accept()
+            # Quit the application to ensure process exits
+            from PyQt6.QtWidgets import QApplication
+            QApplication.quit()
     
     def quit_application(self) -> None:
         """Actually quit the application."""
