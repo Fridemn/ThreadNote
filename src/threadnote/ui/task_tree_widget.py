@@ -1,18 +1,16 @@
 """Task tree view widget."""
 from typing import List, Optional
-from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout, QMenu
+from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout
 from PyQt6.QtCore import pyqtSignal, Qt
-from PyQt6.QtGui import QAction
 
 from ..core.task import Task, TaskStatus
 
 class TaskTreeWidget(QWidget):
     """
     Displays tasks in a hierarchical tree.
-    Sorted by Priority -> Due Date -> Created Date.
+    Sorted by Priority -> Created Date.
     """
     
-    task_selected = pyqtSignal(str) # Emits task ID
     priority_change_requested = pyqtSignal(str) # Emits task ID for priority change
     status_change_requested = pyqtSignal(str, str) # Emits (task_id, new_status)
 
@@ -26,9 +24,7 @@ class TaskTreeWidget(QWidget):
         self._tree.setHeaderLabels([self._("Task"), self._("Prio"), self._("Status")])
         self._tree.setColumnWidth(0, 200)
         self._tree.setColumnWidth(1, 50)
-        self._tree.itemClicked.connect(self._on_item_clicked)
-        self._tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self._tree.customContextMenuRequested.connect(self._show_context_menu)
+        self._tree.itemDoubleClicked.connect(self._on_item_double_clicked)
         
         self._layout.addWidget(self._tree)
 
@@ -92,46 +88,79 @@ class TaskTreeWidget(QWidget):
 
         add_items(self._tree, roots)
 
-    def _on_item_clicked(self, item: QTreeWidgetItem, column: int):
-        task_id = item.data(0, Qt.ItemDataRole.UserRole)
-        if task_id:
-            self.task_selected.emit(task_id)
-    
-    def _show_context_menu(self, position):
-        """Show context menu for task operations."""
-        item = self._tree.itemAt(position)
-        if not item:
-            return
-        
+    def _on_item_double_clicked(self, item: QTreeWidgetItem, column: int):
+        """Handle double click on task items."""
         task_id = item.data(0, Qt.ItemDataRole.UserRole)
         if not task_id:
             return
         
-        menu = QMenu(self._tree)
+        # Column 1: Priority
+        if column == 1:
+            self.priority_change_requested.emit(task_id)
         
-        priority_action = QAction(self._("Set Priority..."), self._tree)
-        priority_action.triggered.connect(lambda: self.priority_change_requested.emit(task_id))
-        menu.addAction(priority_action)
+        # Column 2: Status
+        elif column == 2:
+            self._show_status_dialog(task_id)
+    
+    def _show_status_dialog(self, task_id: str):
+        """Show status selection dialog."""
+        from PyQt6.QtWidgets import QDialog, QVBoxLayout, QPushButton, QHBoxLayout, QLabel
+        from PyQt6.QtGui import QFont
+        from PyQt6.QtCore import Qt
         
-        menu.addSeparator()
+        dialog = QDialog(self._tree)
+        dialog.setWindowTitle(self._("Set Status"))
+        dialog.setModal(True)
+        layout = QVBoxLayout(dialog)
+        layout.setSpacing(12)
+        layout.setContentsMargins(24, 20, 24, 20)
         
-        # Status submenu
-        status_menu = menu.addMenu(self._("Set Status"))
+        # Title label
+        title_label = QLabel(self._("Set Status"))
+        title_font = QFont()
+        title_font.setPointSize(13)
+        title_font.setBold(True)
+        title_label.setFont(title_font)
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(title_label)
         
-        status_todo = QAction(self._("Todo"), self._tree)
-        status_todo.triggered.connect(lambda: self.status_change_requested.emit(task_id, "todo"))
-        status_menu.addAction(status_todo)
+        layout.addSpacing(12)
         
-        status_doing = QAction(self._("Doing"), self._tree)
-        status_doing.triggered.connect(lambda: self.status_change_requested.emit(task_id, "doing"))
-        status_menu.addAction(status_doing)
+        # Create button for each status
+        statuses = [
+            ("todo", self._("Todo")),
+            ("doing", self._("Doing")),
+            ("done", self._("Done")),
+            ("timeout", self._("Timeout"))
+        ]
         
-        status_done = QAction(self._("Done"), self._tree)
-        status_done.triggered.connect(lambda: self.status_change_requested.emit(task_id, "done"))
-        status_menu.addAction(status_done)
+        for status_value, status_label in statuses:
+            btn = QPushButton(status_label)
+            btn.setMinimumHeight(45)
+            btn.setMinimumWidth(320)
+            btn_font = QFont()
+            btn_font.setPointSize(11)
+            btn.setFont(btn_font)
+            btn.clicked.connect(lambda checked, s=status_value: self._on_status_selected(task_id, s, dialog))
+            layout.addWidget(btn)
         
-        status_timeout = QAction(self._("Timeout"), self._tree)
-        status_timeout.triggered.connect(lambda: self.status_change_requested.emit(task_id, "timeout"))
-        status_menu.addAction(status_timeout)
+        layout.addSpacing(12)
         
-        menu.exec(self._tree.viewport().mapToGlobal(position))
+        # Cancel button with internationalization
+        cancel_layout = QHBoxLayout()
+        cancel_layout.addStretch()
+        cancel_btn = QPushButton(self._("Cancel"))
+        cancel_btn.setMinimumWidth(120)
+        cancel_btn.setMinimumHeight(36)
+        cancel_btn.clicked.connect(dialog.reject)
+        cancel_layout.addWidget(cancel_btn)
+        cancel_layout.addStretch()
+        layout.addLayout(cancel_layout)
+        
+        dialog.setMinimumWidth(400)
+        dialog.exec()
+    
+    def _on_status_selected(self, task_id: str, status: str, dialog):
+        """Handle status selection."""
+        self.status_change_requested.emit(task_id, status)
+        dialog.accept()
