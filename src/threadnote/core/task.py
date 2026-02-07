@@ -28,7 +28,6 @@ class Task:
     status: TaskStatus = TaskStatus.TODO
     created_at: datetime = field(default_factory=datetime.now)
     updated_at: datetime = field(default_factory=datetime.now)
-    due_date: Optional[datetime] = None
 
     def touch(self) -> None:
         """Update the modification timestamp."""

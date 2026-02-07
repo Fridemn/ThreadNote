@@ -15,7 +15,6 @@ class TaskTreeWidget(QWidget):
     task_selected = pyqtSignal(str) # Emits task ID
     priority_change_requested = pyqtSignal(str) # Emits task ID for priority change
     status_change_requested = pyqtSignal(str, str) # Emits (task_id, new_status)
-    duedate_change_requested = pyqtSignal(str) # Emits task ID for due date change
 
     def __init__(self, translator=None, parent=None):
         super().__init__(parent)
@@ -50,9 +49,8 @@ class TaskTreeWidget(QWidget):
                 
         # Sort helper
         def sort_key(t: Task):
-            # Same sort as PriorityQueue: Prio (asc), Due (asc/inf), Created (asc)
-            due = t.due_date.timestamp() if t.due_date else float('inf')
-            return (t.priority, due, t.created_at.timestamp())
+            # Same sort as PriorityQueue: Prio (asc), Created (asc)
+            return (t.priority, t.created_at.timestamp())
 
         # Render function
         def add_items(parent_widget, task_list):
@@ -114,11 +112,6 @@ class TaskTreeWidget(QWidget):
         priority_action = QAction(self._("Set Priority..."), self._tree)
         priority_action.triggered.connect(lambda: self.priority_change_requested.emit(task_id))
         menu.addAction(priority_action)
-        
-        # Due date action
-        duedate_action = QAction(self._("Set Due Date"), self._tree)
-        duedate_action.triggered.connect(lambda: self.duedate_change_requested.emit(task_id))
-        menu.addAction(duedate_action)
         
         menu.addSeparator()
         

@@ -125,8 +125,7 @@ class DataStore:
                 "priority": t.priority,
                 "status": t.status.value,
                 "created_at": t.created_at.isoformat(),
-                "updated_at": t.updated_at.isoformat(),
-                "due_date": t.due_date.isoformat() if t.due_date else None
+                "updated_at": t.updated_at.isoformat()
             }
         self.metadata_file.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
 
@@ -171,7 +170,7 @@ class DataStore:
                 # Let's sort by the business logic rules using PriorityQueue logic or simple sort.
                 sorted_children = sorted(
                     children_map[parent_id],
-                    key=lambda x: (x.priority, x.due_date.timestamp() if x.due_date else float('inf'), x.created_at.timestamp())
+                    key=lambda x: (x.priority, x.created_at.timestamp())
                 )
                 
                 for child in sorted_children:
@@ -200,8 +199,7 @@ class DataStore:
                 "priority": t.priority,
                 "status": t.status.value,
                 "created_at": t.created_at.isoformat(),
-                "updated_at": t.updated_at.isoformat(),
-                "due_date": t.due_date.isoformat() if t.due_date else None
+                "updated_at": t.updated_at.isoformat()
             }
         
         self.metadata_file.write_text(json.dumps(metadata, indent=2), encoding="utf-8")

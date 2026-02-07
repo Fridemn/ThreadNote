@@ -117,22 +117,6 @@ msgstr ""
 msgid "Switch Language"
 msgstr ""
 
-# Due Date
-msgid "Set Due Date"
-msgstr ""
-
-msgid "No Due Date"
-msgstr ""
-
-msgid "Today"
-msgstr ""
-
-msgid "Tomorrow"
-msgstr ""
-
-msgid "Next Week"
-msgstr ""
-
 # Tree Headers
 msgid "Task"
 msgstr ""

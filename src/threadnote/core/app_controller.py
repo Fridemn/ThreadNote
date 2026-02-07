@@ -43,7 +43,6 @@ class AppController:
         self._window.tree_widget.status_change_requested.connect(self._on_status_change_requested)
         self._window.archive_action.triggered.connect(self._on_archive_requested)
         self._window.language_action.triggered.connect(self._on_language_change_requested)
-        self._window.tree_widget.duedate_change_requested.connect(self._on_duedate_change_requested)
 
     def toggle_theme(self):
         """Switch between light and dark mode."""
@@ -176,8 +175,7 @@ class AppController:
         
         # Sort function
         def sort_key(t):
-            due = t.due_date.timestamp() if t.due_date else float('inf')
-            return (t.priority, due, t.created_at.timestamp())
+            return (t.priority, t.created_at.timestamp())
         
         # Generate markdown
         lines = []
@@ -288,33 +286,6 @@ class AppController:
                 # Restart application immediately
                 subprocess.Popen([sys.executable, "-m", "threadnote"])
                 QApplication.quit()
-
-    def _on_duedate_change_requested(self, task_id: str):
-        """Handle due date change request from tree widget."""
-        from ..ui.duedate_dialog import DueDateDialog
-        
-        # Get current content and tasks
-        content = self._window.editor_widget.toPlainText()
-        tasks = self._data_store.reconcile_tasks(content)
-        
-        # Find the task
-        task = next((t for t in tasks if t.id == task_id), None)
-        if not task:
-            return
-        
-        # Show due date dialog
-        dialog = DueDateDialog(current_due_date=task.due_date, translator=self._window._, parent=self._window)
-        if dialog.exec() == DueDateDialog.DialogCode.Accepted:
-            new_due_date = dialog.get_due_date()
-            # Update even if None (clearing due date)
-            task.due_date = new_due_date
-            task.touch()
-            
-            # Save metadata
-            self._data_store.save_metadata(tasks)
-            
-            # Refresh tree to show updated sorting (due date affects sort order)
-            self._window.tree_widget.refresh(tasks)
 
     def show(self) -> None:
         """Show the main window."""
