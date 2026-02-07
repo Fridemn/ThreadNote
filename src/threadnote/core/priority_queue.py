@@ -1,6 +1,6 @@
 """Priority queue logic for tasks."""
+
 import heapq
-from datetime import datetime
 from typing import List, Optional, Tuple
 
 from .task import Task
@@ -21,7 +21,7 @@ class TaskPriorityQueue:
     def push(self, task: Task) -> None:
         """Add a task to the priority queue."""
         created_ts = task.created_at.timestamp()
-        
+
         sort_key = (task.priority, created_ts, task.id)
         heapq.heappush(self._heap, (sort_key, task))
 

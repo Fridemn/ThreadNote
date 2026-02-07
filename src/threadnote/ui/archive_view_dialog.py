@@ -1,4 +1,5 @@
 """Dialog for viewing archived tasks."""
+
 from pathlib import Path
 from typing import Callable, Optional
 
@@ -11,7 +12,9 @@ from ..constants import ARCHIVE_VIEW_REFRESH_MS
 class ArchiveViewDialog(QDialog):
     """Read-only dialog showing archived tasks content."""
 
-    def __init__(self, archive_file: Path, translator: Callable[[str], str] = None, parent=None) -> None:
+    def __init__(
+        self, archive_file: Path, translator: Callable[[str], str] = None, parent=None
+    ) -> None:
         super().__init__(parent)
         self._ = translator if translator else lambda x: x
         self._archive_file = archive_file

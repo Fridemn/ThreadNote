@@ -1,5 +1,5 @@
 """Tests for task.py"""
-import pytest
+
 import time
 from datetime import datetime
 from threadnote.core.task import Task, TaskStatus

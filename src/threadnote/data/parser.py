@@ -1,6 +1,7 @@
 """Markdown parsing logic with support for task extraction."""
+
 import re
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 from ..core.task import Task
 
@@ -20,7 +21,7 @@ class MarkdownParser:
         """
         lines = content.splitlines()
         parsed_items: List[Tuple[int, str, List[str]]] = []
-        
+
         current_level = 0
         current_title = ""
         current_content: List[str] = []
@@ -30,8 +31,14 @@ class MarkdownParser:
             if match:
                 # Flush previous item if it exists and is a task (level > 0)
                 if current_level > 0:
-                    parsed_items.append((current_level, current_title, "\n".join(current_content).strip()))
-                
+                    parsed_items.append(
+                        (
+                            current_level,
+                            current_title,
+                            "\n".join(current_content).strip(),
+                        )
+                    )
+
                 # Start new item
                 hashes, title = match.groups()
                 current_level = len(hashes)
@@ -45,10 +52,12 @@ class MarkdownParser:
                 # For now, append if we are inside a task.
                 if current_level > 0:
                     current_content.append(line)
-        
+
         # Flush last item
         if current_level > 0:
-            parsed_items.append((current_level, current_title, "\n".join(current_content).strip()))
+            parsed_items.append(
+                (current_level, current_title, "\n".join(current_content).strip())
+            )
 
         # Convert list format if needed, for now returning tuples
         return [(lvl, title, content) for lvl, title, content in parsed_items]
@@ -56,11 +65,11 @@ class MarkdownParser:
     def to_markdown(self, tasks: List[Task]) -> str:
         """
         Convert tasks back to markdown.
-        Note: This is complex because tasks are a tree. 
+        Note: This is complex because tasks are a tree.
         We need to traverse the tree (Depth First Pre-order) to generate MD.
         """
         # This requires the Task objects to be linked with children.
         # Use a helper that takes a list of root tasks, or handle the flat list if they are ordered.
-        # Assuming TaskManager provides full list or tree. 
+        # Assuming TaskManager provides full list or tree.
         # For now, let's implement a tree traverser if given root tasks.
         pass  # TODO: Implement generator based on Tree structure

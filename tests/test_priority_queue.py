@@ -1,7 +1,7 @@
 """Tests for priority_queue.py"""
-import pytest
+
 from datetime import datetime
-from threadnote.core.task import Task, TaskStatus
+from threadnote.core.task import Task
 from threadnote.core.priority_queue import TaskPriorityQueue
 
 

@@ -23,3 +23,8 @@ threadnote = "threadnote.main:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/threadnote"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.0",
+]

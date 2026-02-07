@@ -1,4 +1,5 @@
 """Central management of tasks."""
+
 from typing import Dict, List, Optional
 import uuid
 
@@ -13,20 +14,22 @@ class TaskManager:
         self._tasks: Dict[str, Task] = {}
         self._priority_queue = TaskPriorityQueue()
 
-    def create_task(self, title: str, level: int = 1, parent_id: Optional[str] = None) -> Task:
+    def create_task(
+        self, title: str, level: int = 1, parent_id: Optional[str] = None
+    ) -> Task:
         """Create a new task and add it to the manager."""
         task_id = str(uuid.uuid4())
         task = Task(id=task_id, title=title, level=level, parent_id=parent_id)
-        
+
         self._tasks[task_id] = task
-        
+
         # If parent exists, link it
         if parent_id and parent_id in self._tasks:
             parent = self._tasks[parent_id]
             parent.children.append(task_id)
             # Inherit priority if not set? (Implementation logic: default is 4, user changes later?
             # Or inherit immediately. Req: "Child tasks inherit parent priority by default")
-            if parent.priority != 4: # If parent has specific priority
+            if parent.priority != 4:  # If parent has specific priority
                 task.priority = parent.priority
 
         self._refresh_queue()
@@ -35,7 +38,7 @@ class TaskManager:
     def get_task(self, task_id: str) -> Optional[Task]:
         """Retrieve a task by ID."""
         return self._tasks.get(task_id)
-    
+
     def get_all_tasks(self) -> List[Task]:
         """Return all tasks."""
         return list(self._tasks.values())
@@ -50,19 +53,19 @@ class TaskManager:
         """Remove a task and its children."""
         if task_id not in self._tasks:
             return
-        
+
         task = self._tasks[task_id]
         # Remove from parent's children list
         if task.parent_id and task.parent_id in self._tasks:
             parent = self._tasks[task.parent_id]
             if task_id in parent.children:
                 parent.children.remove(task_id)
-        
+
         # Recursively delete children? Or promote them?
         # Usually delete children for a strict tree.
         for child_id in list(task.children):
             self.delete_task(child_id)
-            
+
         del self._tasks[task_id]
         self._refresh_queue()
 

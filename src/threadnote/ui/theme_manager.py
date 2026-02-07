@@ -1,12 +1,15 @@
 """Theme management for Light/Dark modes."""
+
 from enum import Enum
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPalette, QColor
 
+
 class Theme(str, Enum):
     LIGHT = "light"
     DARK = "dark"
+
 
 class ThemeManager:
     """Manages application-wide theme styles."""
@@ -55,7 +58,7 @@ class ThemeManager:
 
     @staticmethod
     def _apply_light_theme(app: QApplication):
-        palette = QPalette() # Default is usually light
+        palette = QPalette()  # Default is usually light
         palette.setColor(QPalette.ColorRole.Window, Qt.GlobalColor.white)
         palette.setColor(QPalette.ColorRole.WindowText, Qt.GlobalColor.black)
         palette.setColor(QPalette.ColorRole.Base, Qt.GlobalColor.white)
@@ -64,7 +67,7 @@ class ThemeManager:
         palette.setColor(QPalette.ColorRole.Button, QColor(240, 240, 240))
         palette.setColor(QPalette.ColorRole.ButtonText, Qt.GlobalColor.black)
         app.setPalette(palette)
-        
+
         app.setStyleSheet("""
             QTreeWidget {
                 background-color: #FFFFFF;

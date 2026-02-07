@@ -1,4 +1,5 @@
 """ThreadNote application entry point."""
+
 from PyQt6.QtWidgets import QApplication
 from PyQt6.QtGui import QIcon
 
@@ -12,20 +13,20 @@ from .utils.resources import get_resource_path
 def main() -> int:
     """Start the ThreadNote application."""
     app = QApplication([])
-    
+
     # Set application icon
-    icon_path = get_resource_path('logo.png')
+    icon_path = get_resource_path("logo.png")
     if icon_path.exists():
         app.setWindowIcon(QIcon(str(icon_path)))
-    
+
     # Load user preferences
     config = load_config()
     prefs = UserPreferences(config.preferences_file)
-    
+
     # Get locale (from preferences or system default)
     preferred_locale = prefs.get_locale()
     translator = gettext_factory(preferred_locale)
-    
+
     controller = AppController(translator, prefs)
     controller.show()
     return app.exec()

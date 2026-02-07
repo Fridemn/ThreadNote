@@ -1,4 +1,5 @@
 """Application-wide constants."""
+
 from typing import Tuple
 
 APP_NAME: str = "ThreadNote"

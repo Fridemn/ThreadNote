@@ -1,4 +1,5 @@
 """Internationalization helpers using gettext."""
+
 import locale
 from gettext import GNUTranslations, translation
 from typing import Callable, Optional

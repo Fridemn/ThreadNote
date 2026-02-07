@@ -1,18 +1,24 @@
 """Main window for ThreadNote."""
+
 from typing import Callable
 from PyQt6.QtWidgets import (
-    QMainWindow, QSplitter, QWidget, QVBoxLayout, QToolBar, 
-    QStatusBar, QSystemTrayIcon, QMenu
+    QMainWindow,
+    QSplitter,
+    QWidget,
+    QVBoxLayout,
+    QToolBar,
+    QStatusBar,
+    QSystemTrayIcon,
+    QMenu,
 )
 from PyQt6.QtGui import QAction, QKeySequence, QIcon, QCloseEvent
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt
 
 from ..constants import APP_NAME, DEFAULT_WINDOW_SIZE
 from ..utils.resources import get_resource_path
 from .editor_widget import EditorWidget
 from .task_tree_widget import TaskTreeWidget
-from .priority_dialog import PriorityDialog
-from ..core.task import Task
+
 
 class MainWindow(QMainWindow):
     """Primary application window."""
@@ -30,21 +36,21 @@ class MainWindow(QMainWindow):
         # Toolbar
         self.toolbar = QToolBar()
         self.addToolBar(self.toolbar)
-        
+
         # Actions (Theme Toggle placeholder)
         self.theme_action = QAction(self._("Toggle Theme"), self)
         self.theme_action.setShortcut(QKeySequence("Ctrl+T"))
         self.toolbar.addAction(self.theme_action)
-        
+
         self.toolbar.addSeparator()
-        
+
         # Archive action
         self.archive_action = QAction(self._("Archive"), self)
         self.archive_action.setShortcut(QKeySequence("Ctrl+Shift+A"))
         self.toolbar.addAction(self.archive_action)
-        
+
         self.toolbar.addSeparator()
-        
+
         # Language switch action
         self.language_action = QAction(self._("Language"), self)
         self.language_action.setShortcut(QKeySequence("Ctrl+L"))
@@ -57,25 +63,25 @@ class MainWindow(QMainWindow):
 
         # Splitter
         self.splitter = QSplitter(Qt.Orientation.Horizontal)
-        
+
         # Left: Tree
         self.tree_widget = TaskTreeWidget(translator=self._)
         self.splitter.addWidget(self.tree_widget)
-        
+
         # Right: Editor
         self.editor_widget = EditorWidget(translator=self._)
         self.splitter.addWidget(self.editor_widget)
-        
+
         # Set initial sizes (30% left, 70% right)
         self.splitter.setStretchFactor(0, 3)
         self.splitter.setStretchFactor(1, 7)
 
         main_layout.addWidget(self.splitter)
-        
+
         # Status bar for temporary messages
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
-        
+
         # Additional shortcuts (not in toolbar)
         self._setup_shortcuts()
 
@@ -86,7 +92,7 @@ class MainWindow(QMainWindow):
         save_action.setShortcut(QKeySequence.StandardKey.Save)
         save_action.triggered.connect(lambda: None)  # Auto-save already handles this
         self.addAction(save_action)
-        
+
         # Ctrl+F: Focus editor (search in the future)
         focus_editor_action = QAction(self)
         focus_editor_action.setShortcut(QKeySequence.StandardKey.Find)
@@ -98,46 +104,46 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(self._(APP_NAME))
         width, height = DEFAULT_WINDOW_SIZE
         self.resize(width, height)
-        
+
         # Set window icon
-        icon_path = get_resource_path('logo.png')
+        icon_path = get_resource_path("logo.png")
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 
     def show_temporary_message(self, message: str, duration_ms: int = 3000) -> None:
         """Show a temporary message in the status bar."""
         self.status_bar.showMessage(message, duration_ms)
-    
+
     def _init_tray_icon(self) -> None:
         """Initialize system tray icon."""
         # Get icon
-        icon_path = get_resource_path('logo.png')
+        icon_path = get_resource_path("logo.png")
         icon = QIcon(str(icon_path)) if icon_path.exists() else QIcon()
-        
+
         # Create tray icon
         self.tray_icon = QSystemTrayIcon(icon, self)
-        
+
         # Create tray menu
         tray_menu = QMenu()
-        
+
         # Show/Hide action
         show_action = tray_menu.addAction(self._("Show/Hide"))
         show_action.triggered.connect(self._toggle_window_visibility)
-        
+
         tray_menu.addSeparator()
-        
+
         # Quit action
         quit_action = tray_menu.addAction(self._("Quit"))
         quit_action.triggered.connect(self.quit_application)
-        
+
         # Set menu and show tray icon
         self.tray_icon.setContextMenu(tray_menu)
         self.tray_icon.activated.connect(self._on_tray_icon_activated)
         self.tray_icon.show()
-        
+
         # Set tooltip
         self.tray_icon.setToolTip(self._(APP_NAME))
-    
+
     def _toggle_window_visibility(self) -> None:
         """Toggle window visibility."""
         if self.isVisible():
@@ -146,27 +152,29 @@ class MainWindow(QMainWindow):
             self.show()
             self.activateWindow()
             self.raise_()
-    
+
     def _on_tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason) -> None:
         """Handle tray icon activation (click)."""
         # On left click, toggle window visibility
         if reason == QSystemTrayIcon.ActivationReason.Trigger:
             self._toggle_window_visibility()
-    
+
     def closeEvent(self, event: QCloseEvent) -> None:
         """Override close event to minimize to tray instead of quitting."""
         if not self._force_quit:
             # Just hide the window
             event.ignore()
             self.hide()
-            
+
             # Show a tray message on first minimize
-            if not hasattr(self, '_first_minimize_shown'):
+            if not hasattr(self, "_first_minimize_shown"):
                 self.tray_icon.showMessage(
                     self._(APP_NAME),
-                    self._("Application minimized to tray. Right-click the tray icon to quit."),
+                    self._(
+                        "Application minimized to tray. Right-click the tray icon to quit."
+                    ),
                     QSystemTrayIcon.MessageIcon.Information,
-                    3000
+                    3000,
                 )
                 self._first_minimize_shown = True
         else:
@@ -175,8 +183,9 @@ class MainWindow(QMainWindow):
             event.accept()
             # Quit the application to ensure process exits
             from PyQt6.QtWidgets import QApplication
+
             QApplication.quit()
-    
+
     def quit_application(self) -> None:
         """Actually quit the application."""
         self._force_quit = True

@@ -1,4 +1,5 @@
 """Configuration loading for ThreadNote."""
+
 from dataclasses import dataclass
 from pathlib import Path
 
