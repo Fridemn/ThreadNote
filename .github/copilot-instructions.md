@@ -10,7 +10,15 @@ ThreadNote is a desktop application for multitasking programmers, using Markdown
 ## Critical Implementation Rules
 
 ### 1. Coding Standards
-- **NO HARDCODING**: Never hardcode paths, colors, labels, or configuration values. Use `config.py`, `constants.py`, or resource files (JSON/YAML) for all literals.
+- **NO HARDCODING**: 
+  - **Configuration**: Never hardcode paths, colors, or configuration values. Use `config.py`, `constants.py`, or resource files (JSON/YAML).
+  - **User-Facing Strings**: NEVER hardcode user-visible text or store it in `constants.py`. All UI strings MUST be wrapped with the translator function `self._("String")` or `translator("String")`.
+  - **Translation Workflow**:
+    1. Use `self._("English Text")` for all buttons, labels, titles, messages
+    2. Add translations to `locales/ThreadNote.pot` (template)
+    3. Add translations to `locales/zh_CN/LC_MESSAGES/ThreadNote.po` (Chinese)
+    4. Run `python scripts/compile_translations.py` to generate `.mo` files
+  - **Constants**: Only store technical constants (timeouts, sizes, enums) in `constants.py`, never user-facing labels.
 - **Type Hints**: Always use Python type hints (`from typing import ...`).
 - **Docstrings**: Include clear docstrings for all classes and functions.
 - **MVC Pattern**: Strictly separate Model (logic/data), View (PyQt widgets), and Controller (interaction).
@@ -28,7 +36,7 @@ ThreadNote is a desktop application for multitasking programmers, using Markdown
 
 ### 3. UI/UX Guidelines
 - **Theme**: Support dynamic Light/Dark mode switching.
-- **I18n**: Use `gettext` for all user-facing strings.
+- **I18n**: Use `gettext` for all user-facing strings. Every button, label, title, message, and error text MUST be wrapped with `self._("text")`. Never put UI strings in constants.py.
 - **Layout**: Tree view (Left) + Markdown Editor (Right). Responsive splitter.
 
 ### 4. Deployment
