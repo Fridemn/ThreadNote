@@ -67,6 +67,65 @@ msgstr ""
 msgid "Set Priority..."
 msgstr ""
 
+# Status Management
+msgid "Set Status"
+msgstr ""
+
+msgid "Todo"
+msgstr ""
+
+msgid "Doing"
+msgstr ""
+
+msgid "Done"
+msgstr ""
+
+msgid "Timeout"
+msgstr ""
+
+msgid "Archive"
+msgstr ""
+
+# Archive View Dialog
+msgid "Archived Tasks"
+msgstr ""
+
+msgid "Archive is empty."
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Archive Completed Tasks"
+msgstr ""
+
+# Archive timestamp
+msgid "Archived on"
+msgstr ""
+
+# Language
+msgid "Language"
+msgstr ""
+
+msgid "Switch Language"
+msgstr ""
+
+# Due Date
+msgid "Set Due Date"
+msgstr ""
+
+msgid "No Due Date"
+msgstr ""
+
+msgid "Today"
+msgstr ""
+
+msgid "Tomorrow"
+msgstr ""
+
+msgid "Next Week"
+msgstr ""
+
 # Tree Headers
 msgid "Task"
 msgstr ""

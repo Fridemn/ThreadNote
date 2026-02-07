@@ -86,6 +86,16 @@ msgstr "超时"
 msgid "Archive"
 msgstr "归档"
 
+# Archive View Dialog
+msgid "Archived Tasks"
+msgstr "已归档任务"
+
+msgid "Archive is empty."
+msgstr "归档为空。"
+
+msgid "Close"
+msgstr "关闭"
+
 msgid "Archive Completed Tasks"
 msgstr "归档已完成任务"
 

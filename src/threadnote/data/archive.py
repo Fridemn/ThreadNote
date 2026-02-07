@@ -69,7 +69,7 @@ class ArchiveManager:
         # Add timestamp header
         from datetime import datetime
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        lines.append(f"\n## {self._('Archived on')} {timestamp}\n")
+        lines.append(f"\n**{self._('Archived on')} {timestamp}**\n")
         
         for root in roots:
             render_task(root)

@@ -149,24 +149,15 @@ class AppController:
             pass
 
     def _on_archive_requested(self):
-        """Archive all completed tasks."""
-        # Get current content and tasks
-        content = self._window.editor_widget.toPlainText()
-        tasks = self._data_store.reconcile_tasks(content)
-        
-        # Separate completed tasks and archive them
-        active_tasks = self._archive_manager.archive_completed_tasks(tasks)
-        
-        # Regenerate markdown from active tasks only
-        self._regenerate_markdown(active_tasks)
-        
-        # Save metadata for active tasks
-        self._data_store.save_metadata(active_tasks)
-        
-        # Refresh UI
-        new_content = self._data_store.todo_file.read_text(encoding="utf-8")
-        self._window.editor_widget.set_content(new_content)
-        self._window.tree_widget.refresh(active_tasks)
+        """Open a read-only view of the archive document."""
+        from ..ui.archive_view_dialog import ArchiveViewDialog
+
+        dialog = ArchiveViewDialog(
+            archive_file=self._data_store.archive_file,
+            translator=self._window._,
+            parent=self._window,
+        )
+        dialog.exec()
     
     def _regenerate_markdown(self, tasks: List[Task]):
         """Regenerate todo.md from task list."""
