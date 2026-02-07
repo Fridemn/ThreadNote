@@ -22,7 +22,7 @@ class TaskPriorityQueue:
         """Add a task to the priority queue."""
         created_ts = task.created_at.timestamp()
         
-        sort_key = (task.priority, created_ts)
+        sort_key = (task.priority, created_ts, task.id)
         heapq.heappush(self._heap, (sort_key, task))
 
     def pop(self) -> Optional[Task]:

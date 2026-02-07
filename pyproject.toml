@@ -13,6 +13,11 @@ dependencies = [
   "polib>=1.2.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+]
+
 [project.scripts]
 threadnote = "threadnote.main:main"
 
