@@ -30,6 +30,9 @@ class TaskTreeWidget(QWidget):
 
     def refresh(self, tasks: List[Task]):
         """Rebuild the tree from list of tasks."""
+        # Save current expanded state before clearing
+        expanded_state = self._save_expanded_state()
+        
         self._tree.clear()
         
         # Build map for hierarchy
@@ -82,11 +85,39 @@ class TaskTreeWidget(QWidget):
                 if t.id in children_map:
                     add_items(item, children_map[t.id])
                 
-                # Expand by default if high priority?
-                if t.priority <= 2:
+                # Determine if should be expanded
+                should_expand = False
+                if expanded_state is not None and t.id in expanded_state:
+                    # Restore previous expanded state
+                    should_expand = expanded_state[t.id]
+                elif t.priority <= 2:
+                    # Expand by default if high priority (only for initial load)
+                    should_expand = True
+                
+                if should_expand:
                     item.setExpanded(True)
 
         add_items(self._tree, roots)
+        
+    def _save_expanded_state(self) -> Optional[dict]:
+        """Save the current expanded state of all items by task ID."""
+        expanded_state = {}
+        
+        def traverse_item(item: QTreeWidgetItem):
+            task_id = item.data(0, Qt.ItemDataRole.UserRole)
+            if task_id:
+                expanded_state[task_id] = item.isExpanded()
+            
+            # Traverse children
+            for i in range(item.childCount()):
+                traverse_item(item.child(i))
+        
+        # Traverse all root items
+        root = self._tree.invisibleRootItem()
+        for i in range(root.childCount()):
+            traverse_item(root.child(i))
+        
+        return expanded_state if expanded_state else None
 
     def _on_item_double_clicked(self, item: QTreeWidgetItem, column: int):
         """Handle double click on task items."""
