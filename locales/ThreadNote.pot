@@ -103,6 +103,13 @@ msgstr ""
 msgid "Archived on"
 msgstr ""
 
+# Archive notifications
+msgid "1 task archived"
+msgstr ""
+
+msgid "{} tasks archived"
+msgstr ""
+
 # Language
 msgid "Language"
 msgstr ""

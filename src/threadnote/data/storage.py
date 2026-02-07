@@ -91,6 +91,16 @@ class DataStore:
             
             tasks.append(t)
             parent_stack.append((level, t.id))
+        
+        # Build children relationships
+        for task in tasks:
+            task.children = []
+        
+        for task in tasks:
+            if task.parent_id:
+                parent = next((t for t in tasks if t.id == task.parent_id), None)
+                if parent and task.id not in parent.children:
+                    parent.children.append(task.id)
             
         return tasks
 

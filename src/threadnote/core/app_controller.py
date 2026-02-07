@@ -126,21 +126,23 @@ class AppController:
             # Save metadata
             self._data_store.save_metadata(tasks)
             
-            # Auto-archive: If marked as Done and has no children, archive immediately
-            if task.status == TaskStatus.DONE and len(task.children) == 0:
-                # Archive the completed task
-                active_tasks = self._archive_manager.archive_completed_tasks(tasks)
-                
-                # Regenerate markdown from active tasks only
-                self._regenerate_markdown(active_tasks)
-                
-                # Save metadata for active tasks
-                self._data_store.save_metadata(active_tasks)
-                
+            # Auto-archive: Check if we should archive a complete task tree
+            archived_count = self._check_and_archive_complete_trees(tasks)
+            
+            if archived_count > 0:
+                # Tasks were archived, need to refresh everything
                 # Refresh UI
                 new_content = self._data_store.todo_file.read_text(encoding="utf-8")
                 self._window.editor_widget.set_content(new_content)
-                self._window.tree_widget.refresh(active_tasks)
+                reloaded_tasks = self._data_store.reconcile_tasks(new_content)
+                self._window.tree_widget.refresh(reloaded_tasks)
+                
+                # Show temporary message
+                if archived_count == 1:
+                    message = self._window._("1 task archived")
+                else:
+                    message = self._window._("{} tasks archived").format(archived_count)
+                self._window.show_temporary_message(message)
             else:
                 # Just refresh tree to show new status
                 self._window.tree_widget.refresh(tasks)
@@ -200,6 +202,72 @@ class AppController:
         
         content = "\n".join(lines)
         self._data_store.save_raw_md(content)
+
+    def _check_and_archive_complete_trees(self, tasks: List[Task]) -> int:
+        """
+        Check for complete task trees (root + all descendants done) and archive them.
+        Returns the number of tasks archived.
+        """
+        from ..core.task import TaskStatus
+        
+        # Build task map for quick lookup
+        task_map = {t.id: t for t in tasks}
+        
+        # Find root tasks (tasks without parent or parent not in task list)
+        root_tasks = [t for t in tasks if not t.parent_id or t.parent_id not in task_map]
+        
+        # Check each root task tree
+        tasks_to_archive = []
+        for root in root_tasks:
+            if self._is_task_tree_complete(root, task_map):
+                # Collect entire subtree
+                subtree = self._collect_task_subtree(root, task_map)
+                tasks_to_archive.extend(subtree)
+        
+        if tasks_to_archive:
+            # Separate active and archived tasks
+            task_ids_to_archive = {t.id for t in tasks_to_archive}
+            active_tasks = [t for t in tasks if t.id not in task_ids_to_archive]
+            
+            # Archive the completed tasks using archive manager
+            self._archive_manager._append_to_archive(tasks_to_archive)
+            
+            # Regenerate markdown from active tasks only
+            self._regenerate_markdown(active_tasks)
+            
+            # Save metadata for active tasks
+            self._data_store.save_metadata(active_tasks)
+            
+            return len(tasks_to_archive)
+        
+        return 0
+
+    def _is_task_tree_complete(self, task: Task, task_map: dict) -> bool:
+        """Check if a task and all its descendants are marked as DONE."""
+        from ..core.task import TaskStatus
+        
+        if task.status != TaskStatus.DONE:
+            return False
+        
+        # Check all children recursively
+        for child_id in task.children:
+            if child_id in task_map:
+                child = task_map[child_id]
+                if not self._is_task_tree_complete(child, task_map):
+                    return False
+        
+        return True
+
+    def _collect_task_subtree(self, task: Task, task_map: dict) -> List[Task]:
+        """Collect a task and all its descendants."""
+        subtree = [task]
+        
+        for child_id in task.children:
+            if child_id in task_map:
+                child = task_map[child_id]
+                subtree.extend(self._collect_task_subtree(child, task_map))
+        
+        return subtree
 
     def _on_language_change_requested(self):
         """Show language selection dialog."""

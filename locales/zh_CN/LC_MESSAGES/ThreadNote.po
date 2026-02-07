@@ -103,6 +103,13 @@ msgstr "归档已完成任务"
 msgid "Archived on"
 msgstr "归档于"
 
+# Archive notifications
+msgid "1 task archived"
+msgstr "已归档 1 个任务"
+
+msgid "{} tasks archived"
+msgstr "已归档 {} 个任务"
+
 # Language
 msgid "Language"
 msgstr "语言"

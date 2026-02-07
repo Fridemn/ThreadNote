@@ -1,8 +1,8 @@
 """Main window for ThreadNote."""
 from typing import Callable
-from PyQt6.QtWidgets import QMainWindow, QSplitter, QWidget, QVBoxLayout, QToolBar
+from PyQt6.QtWidgets import QMainWindow, QSplitter, QWidget, QVBoxLayout, QToolBar, QStatusBar
 from PyQt6.QtGui import QAction, QKeySequence
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer
 
 from ..constants import APP_NAME, DEFAULT_WINDOW_SIZE
 from .editor_widget import EditorWidget
@@ -66,6 +66,10 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(self.splitter)
         
+        # Status bar for temporary messages
+        self.status_bar = QStatusBar()
+        self.setStatusBar(self.status_bar)
+        
         # Additional shortcuts (not in toolbar)
         self._setup_shortcuts()
 
@@ -88,3 +92,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(self._(APP_NAME))
         width, height = DEFAULT_WINDOW_SIZE
         self.resize(width, height)
+
+    def show_temporary_message(self, message: str, duration_ms: int = 3000) -> None:
+        """Show a temporary message in the status bar."""
+        self.status_bar.showMessage(message, duration_ms)
