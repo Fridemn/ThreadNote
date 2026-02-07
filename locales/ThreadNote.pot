@@ -133,3 +133,13 @@ msgstr ""
 
 msgid "Details..."
 msgstr ""
+
+# System Tray
+msgid "Show/Hide"
+msgstr ""
+
+msgid "Quit"
+msgstr ""
+
+msgid "Application minimized to tray. Right-click the tray icon to quit."
+msgstr ""

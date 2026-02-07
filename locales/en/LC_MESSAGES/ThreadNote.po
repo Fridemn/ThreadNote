@@ -138,3 +138,13 @@ msgstr "# New Task"
 
 msgid "Details..."
 msgstr "Details..."
+
+# System Tray
+msgid "Show/Hide"
+msgstr "Show/Hide"
+
+msgid "Quit"
+msgstr "Quit"
+
+msgid "Application minimized to tray. Right-click the tray icon to quit."
+msgstr "Application minimized to tray. Right-click the tray icon to quit."

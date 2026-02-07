@@ -139,3 +139,13 @@ msgstr "# 新任务"
 
 msgid "Details..."
 msgstr "详情..."
+
+# System Tray
+msgid "Show/Hide"
+msgstr "显示/隐藏"
+
+msgid "Quit"
+msgstr "退出"
+
+msgid "Application minimized to tray. Right-click the tray icon to quit."
+msgstr "应用已最小化到托盘。右键单击托盘图标可退出。"

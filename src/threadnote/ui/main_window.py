@@ -1,7 +1,10 @@
 """Main window for ThreadNote."""
 from typing import Callable
-from PyQt6.QtWidgets import QMainWindow, QSplitter, QWidget, QVBoxLayout, QToolBar, QStatusBar
-from PyQt6.QtGui import QAction, QKeySequence, QIcon
+from PyQt6.QtWidgets import (
+    QMainWindow, QSplitter, QWidget, QVBoxLayout, QToolBar, 
+    QStatusBar, QSystemTrayIcon, QMenu
+)
+from PyQt6.QtGui import QAction, QKeySequence, QIcon, QCloseEvent
 from PyQt6.QtCore import Qt, QTimer
 
 from ..constants import APP_NAME, DEFAULT_WINDOW_SIZE
@@ -17,8 +20,10 @@ class MainWindow(QMainWindow):
     def __init__(self, translator: Callable[[str], str]) -> None:
         super().__init__()
         self._ = translator
+        self._force_quit = False  # Flag for actual quit vs minimize to tray
         self._init_ui()
         self._configure_window()
+        self._init_tray_icon()
 
     def _init_ui(self) -> None:
         """Initialize UI components."""
@@ -102,3 +107,73 @@ class MainWindow(QMainWindow):
     def show_temporary_message(self, message: str, duration_ms: int = 3000) -> None:
         """Show a temporary message in the status bar."""
         self.status_bar.showMessage(message, duration_ms)
+    
+    def _init_tray_icon(self) -> None:
+        """Initialize system tray icon."""
+        # Get icon
+        icon_path = get_resource_path('logo.png')
+        icon = QIcon(str(icon_path)) if icon_path.exists() else QIcon()
+        
+        # Create tray icon
+        self.tray_icon = QSystemTrayIcon(icon, self)
+        
+        # Create tray menu
+        tray_menu = QMenu()
+        
+        # Show/Hide action
+        show_action = tray_menu.addAction(self._("Show/Hide"))
+        show_action.triggered.connect(self._toggle_window_visibility)
+        
+        tray_menu.addSeparator()
+        
+        # Quit action
+        quit_action = tray_menu.addAction(self._("Quit"))
+        quit_action.triggered.connect(self.quit_application)
+        
+        # Set menu and show tray icon
+        self.tray_icon.setContextMenu(tray_menu)
+        self.tray_icon.activated.connect(self._on_tray_icon_activated)
+        self.tray_icon.show()
+        
+        # Set tooltip
+        self.tray_icon.setToolTip(self._(APP_NAME))
+    
+    def _toggle_window_visibility(self) -> None:
+        """Toggle window visibility."""
+        if self.isVisible():
+            self.hide()
+        else:
+            self.show()
+            self.activateWindow()
+            self.raise_()
+    
+    def _on_tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason) -> None:
+        """Handle tray icon activation (click)."""
+        # On left click, toggle window visibility
+        if reason == QSystemTrayIcon.ActivationReason.Trigger:
+            self._toggle_window_visibility()
+    
+    def closeEvent(self, event: QCloseEvent) -> None:
+        """Override close event to minimize to tray instead of quitting."""
+        if not self._force_quit:
+            # Just hide the window
+            event.ignore()
+            self.hide()
+            
+            # Show a tray message on first minimize
+            if not hasattr(self, '_first_minimize_shown'):
+                self.tray_icon.showMessage(
+                    self._(APP_NAME),
+                    self._("Application minimized to tray. Right-click the tray icon to quit."),
+                    QSystemTrayIcon.MessageIcon.Information,
+                    3000
+                )
+                self._first_minimize_shown = True
+        else:
+            # Actually quit
+            event.accept()
+    
+    def quit_application(self) -> None:
+        """Actually quit the application."""
+        self._force_quit = True
+        self.close()
