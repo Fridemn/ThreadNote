@@ -287,10 +287,8 @@ class AppController:
     def _on_language_change_requested(self):
         """Show language selection dialog."""
         from ..ui.language_dialog import LanguageDialog
-        import locale
 
-        current_locale, _ = locale.getdefaultlocale()
-        current_locale = current_locale or "en"
+        current_locale = self._prefs.get_locale()
 
         dialog = LanguageDialog(
             current_locale=current_locale,
@@ -299,13 +297,47 @@ class AppController:
         )
         if dialog.exec() == LanguageDialog.DialogCode.Accepted:
             new_locale = dialog.get_selected_locale()
-            if new_locale:
+            if new_locale and new_locale != current_locale:
                 # Save locale to preferences
                 self._prefs.set_locale(new_locale)
 
-                # Restart application immediately
-                subprocess.Popen([sys.executable, "-m", "threadnote"])
+                # Set force quit flag to prevent minimize-to-tray behavior
+                self._window._force_quit = True
+
+                # Restart application
+                self._restart_application()
+
+    def _restart_application(self):
+        """Restart the application to apply new language."""
+        from PyQt6.QtCore import QTimer
+
+        # Ensure tray icon is hidden before restart
+        if hasattr(self._window, "tray_icon"):
+            self._window.tray_icon.hide()
+
+        # Check if running as PyInstaller bundle
+        if getattr(sys, "frozen", False):
+            # Running as compiled executable
+            # Use os.startfile on Windows for reliable restart
+            if sys.platform == "win32":
+                # Schedule restart after a short delay to ensure clean shutdown
+                QTimer.singleShot(100, lambda: self._delayed_restart(sys.executable))
+            else:
+                # On other platforms, use subprocess
+                subprocess.Popen([sys.executable])
                 QApplication.quit()
+        else:
+            # Running in development
+            subprocess.Popen([sys.executable, "-m", "threadnote"])
+            QApplication.quit()
+
+    def _delayed_restart(self, exe_path: str):
+        """Execute delayed restart on Windows."""
+        import os
+
+        # Use os.startfile which is Windows-specific and reliable
+        os.startfile(exe_path)
+        QApplication.quit()
 
     def show(self) -> None:
         """Show the main window."""

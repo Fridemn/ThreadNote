@@ -6,3 +6,6 @@ __pycache__/
 
 # Compiled translation files
 locales/*/LC_MESSAGES/*.mo
+
+build/
+dist/

@@ -26,5 +26,7 @@ packages = ["src/threadnote"]
 
 [dependency-groups]
 dev = [
+    "pillow>=10.4.0",
+    "pyinstaller>=6.18.0",
     "ruff>=0.15.0",
 ]
