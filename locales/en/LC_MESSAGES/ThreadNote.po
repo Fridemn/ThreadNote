@@ -100,6 +100,12 @@ msgstr "Language"
 msgid "Switch Language"
 msgstr "Switch Language"
 
+msgid "Language Changed"
+msgstr "Language Changed"
+
+msgid "Language setting has been saved. Please restart the application for the changes to take effect."
+msgstr "Language setting has been saved. Please restart the application for the changes to take effect."
+
 msgid "English"
 msgstr "English"
 

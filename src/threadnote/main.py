@@ -11,9 +11,7 @@ from .utils.resources import get_resource_path
 
 
 def main() -> int:
-    """Start the ThreadNote application."""
     app = QApplication([])
-
     # Set application icon
     icon_path = get_resource_path("logo.png")
     if icon_path.exists():

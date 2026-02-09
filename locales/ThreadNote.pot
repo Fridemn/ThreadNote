@@ -117,6 +117,12 @@ msgstr ""
 msgid "Switch Language"
 msgstr ""
 
+msgid "Language Changed"
+msgstr ""
+
+msgid "Language setting has been saved. Please restart the application for the changes to take effect."
+msgstr ""
+
 # Tree Headers
 msgid "Task"
 msgstr ""

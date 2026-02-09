@@ -22,6 +22,7 @@ class AppController:
         self, translator: Callable[[str], str], preferences: UserPreferences
     ) -> None:
         self._window = MainWindow(translator)
+
         self._config = load_config()
         self._prefs = preferences
         self._archive_manager = ArchiveManager(
@@ -34,6 +35,7 @@ class AppController:
         self._current_theme = Theme(saved_theme) if saved_theme else Theme.LIGHT
 
         self._setup_connections()
+
         self._load_initial_data()
 
         # Apply saved theme
@@ -301,43 +303,19 @@ class AppController:
                 # Save locale to preferences
                 self._prefs.set_locale(new_locale)
 
-                # Set force quit flag to prevent minimize-to-tray behavior
-                self._window._force_quit = True
+                # Show message that language will take effect on next startup
+                from PyQt6.QtWidgets import QMessageBox
 
-                # Restart application
-                self._restart_application()
-
-    def _restart_application(self):
-        """Restart the application to apply new language."""
-        from PyQt6.QtCore import QTimer
-
-        # Ensure tray icon is hidden before restart
-        if hasattr(self._window, "tray_icon"):
-            self._window.tray_icon.hide()
-
-        # Check if running as PyInstaller bundle
-        if getattr(sys, "frozen", False):
-            # Running as compiled executable
-            # Use os.startfile on Windows for reliable restart
-            if sys.platform == "win32":
-                # Schedule restart after a short delay to ensure clean shutdown
-                QTimer.singleShot(100, lambda: self._delayed_restart(sys.executable))
-            else:
-                # On other platforms, use subprocess
-                subprocess.Popen([sys.executable])
-                QApplication.quit()
-        else:
-            # Running in development
-            subprocess.Popen([sys.executable, "-m", "threadnote"])
-            QApplication.quit()
-
-    def _delayed_restart(self, exe_path: str):
-        """Execute delayed restart on Windows."""
-        import os
-
-        # Use os.startfile which is Windows-specific and reliable
-        os.startfile(exe_path)
-        QApplication.quit()
+                msg = QMessageBox(self._window)
+                msg.setIcon(QMessageBox.Icon.Information)
+                msg.setWindowTitle(self._window._("Language Changed"))
+                msg.setText(
+                    self._window._(
+                        "Language setting has been saved. Please restart the application for the changes to take effect."
+                    )
+                )
+                msg.setStandardButtons(QMessageBox.StandardButton.Ok)
+                msg.exec()
 
     def show(self) -> None:
         """Show the main window."""

@@ -117,6 +117,12 @@ msgstr "语言"
 msgid "Switch Language"
 msgstr "切换语言"
 
+msgid "Language Changed"
+msgstr "语言已更改"
+
+msgid "Language setting has been saved. Please restart the application for the changes to take effect."
+msgstr "语言设置已保存。请重启应用程序以使更改生效。"
+
 msgid "English"
 msgstr "English"
 
