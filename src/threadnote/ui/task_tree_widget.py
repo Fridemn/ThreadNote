@@ -1,7 +1,7 @@
 """Task tree view widget."""
 
 from typing import List, Optional
-from PyQt6.QtWidgets import QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QMenu, QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout
 from PyQt6.QtCore import pyqtSignal, Qt
 
 from ..core.task import Task
@@ -15,6 +15,7 @@ class TaskTreeWidget(QWidget):
 
     priority_change_requested = pyqtSignal(str)  # Emits task ID for priority change
     status_change_requested = pyqtSignal(str, str)  # Emits (task_id, new_status)
+    delete_requested = pyqtSignal(str)  # Emits task ID for deletion
 
     def __init__(self, translator=None, parent=None):
         super().__init__(parent)
@@ -27,6 +28,8 @@ class TaskTreeWidget(QWidget):
         self._tree.setColumnWidth(0, 200)
         self._tree.setColumnWidth(1, 50)
         self._tree.itemDoubleClicked.connect(self._on_item_double_clicked)
+        self._tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self._tree.customContextMenuRequested.connect(self._show_context_menu)
 
         self._layout.addWidget(self._tree)
 
@@ -136,6 +139,22 @@ class TaskTreeWidget(QWidget):
         # Column 2: Status
         elif column == 2:
             self._show_status_dialog(task_id)
+
+    def _show_context_menu(self, position):
+        """Show actions for the task name column."""
+        item = self._tree.itemAt(position)
+        if not item or self._tree.columnAt(position.x()) != 0:
+            return
+
+        task_id = item.data(0, Qt.ItemDataRole.UserRole)
+        if not task_id:
+            return
+
+        menu = QMenu(self._tree)
+        delete_action = menu.addAction(self._("Delete"))
+        selected_action = menu.exec(self._tree.viewport().mapToGlobal(position))
+        if selected_action == delete_action:
+            self.delete_requested.emit(task_id)
 
     def _show_status_dialog(self, task_id: str):
         """Show status selection dialog."""

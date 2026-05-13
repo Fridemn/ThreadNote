@@ -133,6 +133,12 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
+msgid "Delete"
+msgstr ""
+
+msgid "Task deleted"
+msgstr ""
+
 # Editor Placeholder
 msgid "# New Task"
 msgstr ""

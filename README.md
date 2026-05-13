@@ -25,39 +25,98 @@
 
 ### 前置要求
 
-确保已安装 Python，本项目严格使用 `uv` 进行依赖管理。
+确保已安装：
+
+- Python 3.8+
+- [uv](https://github.com/astral-sh/uv)
 
 ### 安装步骤
 
-1.  **克隆仓库**
-    ```bash
-    git clone https://github.com/yourusername/ThreadNote.git
-    cd ThreadNote
-    ```
+1. **克隆仓库**
 
-2.  **安装依赖**
-    ```bash
-    uv sync
-    ```
+   ```bash
+   git clone https://github.com/yourusername/ThreadNote.git
+   cd ThreadNote
+   ```
 
-3.  **运行应用**
-    ```bash
-    uv run src/main.py
-    ```
+2. **安装依赖**
+
+   ```bash
+   uv sync
+   ```
+
+3. **编译翻译文件**
+
+   首次运行前建议先编译本地化文件，否则语言切换可能不会生效。
+
+   ```bash
+   uv run python scripts/compile_translations.py
+   ```
+
+4. **运行应用**
+
+   推荐使用项目脚本启动：
+
+   ```bash
+   uv run threadnote
+   ```
+
+   也可以使用 Python 模块方式启动：
+
+   ```bash
+   uv run python -m threadnote
+   ```
 
 ## 🏗 开发指南
 
 ### 项目结构
 
-- `src/core`: 业务逻辑与数据模型。
-- `src/ui`: PyQt6 组件与窗口管理。
-- `src/data`: Markdown 解析与文件持久化。
-- `src/utils`: 辅助函数，包括 i18n 和配置管理。
+- `src/threadnote/core`: 业务逻辑与数据模型。
+- `src/threadnote/ui`: PyQt6 组件与窗口管理。
+- `src/threadnote/data`: Markdown 解析与文件持久化。
+- `src/threadnote/utils`: 辅助函数，包括 i18n 和配置管理。
+- `data/todo.md`: 当前任务 Markdown 数据。
+- `data/todo.metadata.json`: 任务优先级、状态等元数据。
 
 ### 打包发布
 
-使用 PyInstaller 构建独立可执行文件：
+项目已提供 PyInstaller 配置文件 `ThreadNote.spec` 和打包脚本 `scripts/build.py`。
+
+1. **安装开发依赖**
+
+   ```bash
+   uv sync --group dev
+   ```
+
+2. **执行打包脚本**
+
+   ```bash
+   uv run python scripts/build.py
+   ```
+
+   该脚本会先编译翻译文件，再调用：
+
+   ```bash
+   uv run pyinstaller ThreadNote.spec
+   ```
+
+3. **查看产物**
+
+   Windows 下输出文件通常为：
+
+   ```text
+   dist/ThreadNote.exe
+   ```
+
+   macOS / Linux 下输出文件通常为：
+
+   ```text
+   dist/ThreadNote
+   ```
+
+如需手动打包，可直接运行：
 
 ```bash
-uv run pyinstaller --noconfirm --onefile --windowed --name "ThreadNote" src/main.py
+uv run python scripts/compile_translations.py
+uv run pyinstaller ThreadNote.spec
 ```

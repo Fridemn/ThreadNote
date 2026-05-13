@@ -139,6 +139,12 @@ msgstr "优先级"
 msgid "Status"
 msgstr "状态"
 
+msgid "Delete"
+msgstr "删除"
+
+msgid "Task deleted"
+msgstr "任务已删除"
+
 # Editor Placeholder
 msgid "# New Task"
 msgstr "# 新任务"

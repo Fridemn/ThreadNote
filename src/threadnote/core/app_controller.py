@@ -53,6 +53,7 @@ class AppController:
         self._window.tree_widget.status_change_requested.connect(
             self._on_status_change_requested
         )
+        self._window.tree_widget.delete_requested.connect(self._on_delete_requested)
         self._window.archive_action.triggered.connect(self._on_archive_requested)
         self._window.language_action.triggered.connect(
             self._on_language_change_requested
@@ -166,6 +167,41 @@ class AppController:
         except ValueError:
             # Invalid status value
             pass
+
+    def _on_delete_requested(self, task_id: str):
+        """Delete the selected task block from the markdown document."""
+        content = self._window.editor_widget.toPlainText()
+        tasks = self._data_store.reconcile_tasks(content)
+        task_index = next((i for i, task in enumerate(tasks) if task.id == task_id), -1)
+        if task_index < 0:
+            return
+
+        lines = content.splitlines()
+        headers = []
+        for line_number, line in enumerate(lines):
+            match = self._data_store.parser.HEADER_PATTERN.match(line)
+            if match:
+                headers.append((line_number, len(match.group(1))))
+
+        if task_index >= len(headers):
+            return
+
+        start_line, target_level = headers[task_index]
+        end_line = len(lines)
+        for line_number, level in headers[task_index + 1 :]:
+            if level <= target_level:
+                end_line = line_number
+                break
+
+        new_lines = lines[:start_line] + lines[end_line:]
+        new_content = "\n".join(new_lines).strip()
+        updated_tasks = self._data_store.reconcile_tasks(new_content)
+
+        self._window.editor_widget.set_content(new_content)
+        self._window.tree_widget.refresh(updated_tasks)
+        self._data_store.save_raw_md(new_content)
+        self._data_store.save_metadata(updated_tasks)
+        self._window.show_temporary_message(self._window._("Task deleted"))
 
     def _on_archive_requested(self):
         """Open a read-only view of the archive document."""

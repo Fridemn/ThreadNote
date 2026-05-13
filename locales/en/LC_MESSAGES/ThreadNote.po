@@ -138,6 +138,12 @@ msgstr "Prio"
 msgid "Status"
 msgstr "Status"
 
+msgid "Delete"
+msgstr "Delete"
+
+msgid "Task deleted"
+msgstr "Task deleted"
+
 # Editor Placeholder
 msgid "# New Task"
 msgstr "# New Task"
