@@ -1,17 +1,17 @@
 """Controller wiring for the application."""
 
-import sys
 import subprocess
+import sys
 from typing import Callable, List
 
 from PyQt6.QtWidgets import QApplication
 
-from ..ui.main_window import MainWindow
 from ..config import load_config
-from ..data.storage import DataStore
-from ..data.archive import ArchiveManager
-from ..ui.theme_manager import ThemeManager, Theme
 from ..core.task import Task
+from ..data.archive import ArchiveManager
+from ..data.storage import DataStore
+from ..ui.main_window import MainWindow
+from ..ui.theme_manager import Theme, ThemeManager
 from ..utils.preferences import UserPreferences
 
 
@@ -356,3 +356,7 @@ class AppController:
     def show(self) -> None:
         """Show the main window."""
         self._window.show()
+
+    def activate(self) -> None:
+        """Show the main window and bring it to the foreground."""
+        self._window.show_and_activate()

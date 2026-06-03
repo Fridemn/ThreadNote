@@ -120,6 +120,16 @@ class MainWindow(QMainWindow):
         """Show a temporary message in the status bar."""
         self.status_bar.showMessage(message, duration_ms)
 
+    def show_and_activate(self) -> None:
+        """Show the window and request focus."""
+        if self.isMinimized():
+            self.showNormal()
+        else:
+            self.show()
+        self.setWindowState(self.windowState() | Qt.WindowState.WindowActive)
+        self.raise_()
+        self.activateWindow()
+
     def _init_tray_icon(self) -> None:
         """Initialize system tray icon."""
         # Get icon
@@ -155,9 +165,7 @@ class MainWindow(QMainWindow):
         if self.isVisible():
             self.hide()
         else:
-            self.show()
-            self.activateWindow()
-            self.raise_()
+            self.show_and_activate()
 
     def _on_tray_icon_activated(self, reason: QSystemTrayIcon.ActivationReason) -> None:
         """Handle tray icon activation (click)."""
