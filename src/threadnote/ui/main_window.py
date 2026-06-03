@@ -1,18 +1,19 @@
 """Main window for ThreadNote."""
 
 from typing import Callable
+
+from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QAction, QCloseEvent, QIcon, QKeySequence
 from PyQt6.QtWidgets import (
     QMainWindow,
+    QMenu,
     QSplitter,
-    QWidget,
-    QVBoxLayout,
-    QToolBar,
     QStatusBar,
     QSystemTrayIcon,
-    QMenu,
+    QToolBar,
+    QVBoxLayout,
+    QWidget,
 )
-from PyQt6.QtGui import QAction, QKeySequence, QIcon, QCloseEvent
-from PyQt6.QtCore import Qt
 
 from ..constants import APP_NAME, DEFAULT_WINDOW_SIZE
 from ..utils.resources import get_resource_path
@@ -72,9 +73,11 @@ class MainWindow(QMainWindow):
         self.editor_widget = EditorWidget(translator=self._)
         self.splitter.addWidget(self.editor_widget)
 
-        # Set initial sizes (30% left, 70% right)
-        self.splitter.setStretchFactor(0, 3)
-        self.splitter.setStretchFactor(1, 7)
+        is_collapsible = False
+        self.splitter.setCollapsible(0, is_collapsible)
+        self.splitter.setCollapsible(1, is_collapsible)
+        self.splitter.setStretchFactor(0, 0)
+        self.splitter.setStretchFactor(1, 1)
 
         main_layout.addWidget(self.splitter)
 
@@ -104,6 +107,9 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(self._(APP_NAME))
         width, height = DEFAULT_WINDOW_SIZE
         self.resize(width, height)
+        self.splitter.setSizes(
+            [self.tree_widget.PREFERRED_WIDTH, width - self.tree_widget.PREFERRED_WIDTH]
+        )
 
         # Set window icon
         icon_path = get_resource_path("logo.png")

@@ -1,8 +1,21 @@
 """Task tree view widget."""
 
 from typing import List, Optional
-from PyQt6.QtWidgets import QMenu, QTreeWidget, QTreeWidgetItem, QWidget, QVBoxLayout
-from PyQt6.QtCore import pyqtSignal, Qt
+
+from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QColor, QFont
+from PyQt6.QtWidgets import (
+    QDialog,
+    QHBoxLayout,
+    QHeaderView,
+    QLabel,
+    QMenu,
+    QPushButton,
+    QTreeWidget,
+    QTreeWidgetItem,
+    QVBoxLayout,
+    QWidget,
+)
 
 from ..core.task import Task
 
@@ -13,6 +26,11 @@ class TaskTreeWidget(QWidget):
     Sorted by Priority -> Created Date.
     """
 
+    MINIMUM_WIDTH = 320
+    PREFERRED_WIDTH = 340
+    PRIORITY_COLUMN_WIDTH = 58
+    STATUS_COLUMN_WIDTH = 74
+
     priority_change_requested = pyqtSignal(str)  # Emits task ID for priority change
     status_change_requested = pyqtSignal(str, str)  # Emits (task_id, new_status)
     delete_requested = pyqtSignal(str)  # Emits task ID for deletion
@@ -20,18 +38,30 @@ class TaskTreeWidget(QWidget):
     def __init__(self, translator=None, parent=None):
         super().__init__(parent)
         self._ = translator if translator else lambda x: x
+        self.setMinimumWidth(self.MINIMUM_WIDTH)
+
         self._layout = QVBoxLayout(self)
         self._layout.setContentsMargins(0, 0, 0, 0)
 
         self._tree = QTreeWidget()
         self._tree.setHeaderLabels([self._("Task"), self._("Prio"), self._("Status")])
-        self._tree.setColumnWidth(0, 200)
-        self._tree.setColumnWidth(1, 50)
+        self._tree.setMinimumWidth(self.MINIMUM_WIDTH)
+        self._configure_header()
         self._tree.itemDoubleClicked.connect(self._on_item_double_clicked)
         self._tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self._tree.customContextMenuRequested.connect(self._show_context_menu)
 
         self._layout.addWidget(self._tree)
+
+    def _configure_header(self) -> None:
+        """Keep all metadata columns visible while giving titles the spare width."""
+        header = self._tree.header()
+        header.setStretchLastSection(False)
+        header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
+        header.setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)
+        header.setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)
+        self._tree.setColumnWidth(1, self.PRIORITY_COLUMN_WIDTH)
+        self._tree.setColumnWidth(2, self.STATUS_COLUMN_WIDTH)
 
     def refresh(self, tasks: List[Task]):
         """Rebuild the tree from list of tasks."""
@@ -69,8 +99,6 @@ class TaskTreeWidget(QWidget):
                 # Style by status
                 if t.status.value == "done":
                     # Gray out and strikethrough
-                    from PyQt6.QtGui import QColor
-
                     font = item.font(0)
                     font.setStrikeOut(True)
                     for col in range(3):
@@ -84,8 +112,6 @@ class TaskTreeWidget(QWidget):
                     item.setFont(0, font)
                 elif t.status.value == "timeout":
                     # Red text for timeout
-                    from PyQt6.QtGui import QColor
-
                     item.setForeground(0, QColor(200, 0, 0))
 
                 # Recursion
@@ -158,16 +184,6 @@ class TaskTreeWidget(QWidget):
 
     def _show_status_dialog(self, task_id: str):
         """Show status selection dialog."""
-        from PyQt6.QtWidgets import (
-            QDialog,
-            QVBoxLayout,
-            QPushButton,
-            QHBoxLayout,
-            QLabel,
-        )
-        from PyQt6.QtGui import QFont
-        from PyQt6.QtCore import Qt
-
         dialog = QDialog(self._tree)
         dialog.setWindowTitle(self._("Set Status"))
         dialog.setModal(True)
